@@ -68,29 +68,37 @@ quickserve/
 ```bash
 git clone https://github.com/your-username/quickserve.git
 cd quickserve
+```
+
 2. Setup Database (PostgreSQL)
 CREATE DATABASE quickserve_db;
 
 Run migrations:
-
+```
 cd backend
 npx prisma migrate dev
+```
+
 3. Setup Backend
+```
 cd backend
 npm install
 npm run start:dev
-
+```
 Backend runs on:
-
+```
 http://localhost:3000
+```
 4. Setup Frontend
+```
 cd frontend
 npm install
 npm start
-
+```
 Frontend runs on:
-
+```
 http://localhost:3001
+```
 🔗 API Endpoints
 Orders
 POST /orders → Create order (Dine-in / Takeout)
@@ -103,6 +111,7 @@ Tables
 PATCH /tables/:id/status → Update status
 Menu
 GET /categories → Get menu
+
 🧠 Architecture
 Controllers → Services → Prisma → Database
 🔥 Key Logic
@@ -111,9 +120,7 @@ tableId absent → TAKEOUT
 Table auto updates status
 Bill generated before payment
 Payment completes order
-📸 Screenshots
 
-(Add screenshots here)
 
 🚀 Deployment
 
@@ -126,6 +133,7 @@ Online payments
 Analytics dashboard
 Kitchen display system
 Mobile UI improvements
+
 👨‍💻 Author
 
 Venkat
