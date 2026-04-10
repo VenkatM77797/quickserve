@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+enum TableStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+}
+
+enum OrderType {
+  DINE_IN
+  TAKEAWAY
+}
+
+enum OrderStatus {
+  OPEN
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+}
+
+model RestaurantTable {
+  id          String      @id @default(uuid())
+  tableNumber Int         @unique
+  capacity    Int
+  status      TableStatus @default(AVAILABLE)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orders      Order[]
+}
+
+model Category {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  items     MenuItem[]
+}
+
+model MenuItem {
+  id        String   @id @default(uuid())
+  name      String
+  price     Decimal
+  createdAt DateTime @default(now())
+
+  categoryId String
+  category   Category    @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+}
+
+model Order {
+  id          String           @id @default(uuid())
+  orderNumber Int              @unique @default(autoincrement())
+  type        OrderType
+  status      OrderStatus
+  createdAt   DateTime         @default(now())
+  tableId     String?
+  table       RestaurantTable? @relation(fields: [tableId], references: [id])
+  items       OrderItem[]
+  payment     Payment?
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  quantity   Int
+  unitPrice  Decimal
+  lineTotal  Decimal
+  createdAt  DateTime @default(now())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model Payment {
+  id      String        @id @default(uuid())
+  method  PaymentMethod
+  amount  Decimal
+  paidAt  DateTime      @default(now())
+  orderId String        @unique
+  order   Order         @relation(fields: [orderId], references: [id])
+}
