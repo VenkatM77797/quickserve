@@ -34,3 +34,98 @@ A full-stack restaurant management system built to handle dine-in and takeout or
 ---
 
 ## 📁 Project Structure
+quickserve/
+│
+├── backend/ # Backend (NestJS API)
+│ ├── src/
+│ │ ├── orders/
+│ │ ├── payments/
+│ │ ├── menu/
+│ │ ├── tables/
+│ │ ├── prisma/
+│ │ └── main.ts
+│ └── prisma/
+│ └── schema.prisma
+│
+├── frontend/ # React Frontend
+│ ├── src/
+│ │ ├── components/
+│ │ │ ├── Menu.tsx
+│ │ │ ├── Cart.tsx
+│ │ │ ├── Bill.tsx
+│ │ │ └── OrderScreen.tsx
+│ │ └── App.tsx
+│
+└── README.md
+
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/quickserve.git
+cd quickserve
+2. Setup Database (PostgreSQL)
+CREATE DATABASE quickserve_db;
+
+Run migrations:
+
+cd backend
+npx prisma migrate dev
+3. Setup Backend
+cd backend
+npm install
+npm run start:dev
+
+Backend runs on:
+
+http://localhost:3000
+4. Setup Frontend
+cd frontend
+npm install
+npm start
+
+Frontend runs on:
+
+http://localhost:3001
+🔗 API Endpoints
+Orders
+POST /orders → Create order (Dine-in / Takeout)
+GET /orders → Get all orders
+GET /orders/table/:id → Get open order by table
+POST /orders/items → Add item
+Payments
+POST /payments → Complete payment
+Tables
+PATCH /tables/:id/status → Update status
+Menu
+GET /categories → Get menu
+🧠 Architecture
+Controllers → Services → Prisma → Database
+🔥 Key Logic
+tableId present → DINE_IN
+tableId absent → TAKEOUT
+Table auto updates status
+Bill generated before payment
+Payment completes order
+📸 Screenshots
+
+(Add screenshots here)
+
+🚀 Deployment
+
+Backend → Render / Railway
+Frontend → Vercel / Netlify
+
+📌 Future Improvements
+Authentication
+Online payments
+Analytics dashboard
+Kitchen display system
+Mobile UI improvements
+👨‍💻 Author
+
+Venkat
