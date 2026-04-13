@@ -126,6 +126,7 @@ Payment completes order
 
 Backend → Render / Railway
 Frontend → Vercel / Netlify
+https://quickserve-21f9fn3b8-venkatm77797s-projects.vercel.app/
 
 📌 Future Improvements
 Authentication
