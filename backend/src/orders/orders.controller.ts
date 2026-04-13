@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Delete, Query } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 
 @Controller('orders')
@@ -46,4 +46,13 @@ export class OrdersController {
   clearItems(@Param('id') id: string) {
     return this.service.clearOrderItems(id);
   }
-}
+
+  @Get('history')
+  getOrderHistory(
+    @Query('date') date?: string,
+    @Query('type') type?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.service.getOrderHistory({ date, type, status});
+  }
+} 

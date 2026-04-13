@@ -1,0 +1,95 @@
+.order-container {
+  padding: 20px;
+  background: #e5eaf5;
+  min-height: 100vh;
+  font-family: Poppins, sans-serif;
+}
+
+.back-btn {
+  display: flex;
+  margin-bottom: 15px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: #d0bdf4;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-title {
+  color: #8458B3;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn-occupy {
+  background-color: #a0d2eb;
+}
+
+.btn-free {
+  background-color: #a28089;
+  color: white;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.generate-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #8458B3;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(5, 0, 0, 0.3);
+}
+
+.generate-btn:hover {
+  transform: scale(1.05);
+}
+
+.pay-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #a0d2eb;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pay-btn:hover {
+  transform: scale(1.05);
+}
+
+.paid-text {
+  color: green;
+  margin-top: 10px;
+}

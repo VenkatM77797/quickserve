@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./css/TableList.css";
 
 const API = "http://localhost:3000";
 
@@ -15,47 +16,21 @@ function TableList({ setScreen, setSelectedTable }: any) {
   };
 
   return (
-    <div
-      style={{
-        padding: 20,
-        background: "#e5eaf5",
-        minHeight: "100vh",
-        fontFamily: "Poppins, sans-serif",
-      }}>
-      {/*Back button */}
+    <div className="table-container">
+      
+      {/* Back button */}
       <button
         onClick={() => setScreen("dashboard")}
-        style={{
-          display: "flex",
-          top: 20,
-          left: 20,
-          padding: "8px 14px",
-          borderRadius: 6,
-          border: "none",
-          backgroundColor: "#d0bdf4",
-          cursor: "pointer",
-          fontWeight: "bold",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-        }}>
+        className="back-btn"
+      >
         Back
       </button>
 
       {/* Title */}
-      <h1
-        style={{
-          color: "#8458B3",
-          marginBottom: 20,
-        }}>
-        Tables
-      </h1>
+      <h1 className="table-title">Tables</h1>
 
-      {/*layout for tables */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(140px,1fr))",
-          gap: 15,
-        }}>
+      {/* Grid */}
+      <div className="table-grid">
         {tables.map((t) => (
           <div
             key={t.id}
@@ -63,21 +38,14 @@ function TableList({ setScreen, setSelectedTable }: any) {
               setSelectedTable(t);
               setScreen("order");
             }}
-            style={{
-              background:
-                t.status === "AVAILABLE"
-                  ? "#a0d2eb"
-                : "#a28089",
-              color: "#333",
-              borderRadius: 12,
-              padding: 15,
-              cursor: "pointer",
-              textAlign: "center",
-              transition: "0.3s",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
-            }}>
+            className={`table-card ${
+              t.status === "AVAILABLE"
+                ? "table-available"
+                : "table-occupied"
+            }`}
+          >
             {/* Table number */}
-            <div style={{ fontWeight: "bold" }}>
+            <div className="table-number">
               Table {t.tableNumber}
             </div>
 
@@ -85,12 +53,7 @@ function TableList({ setScreen, setSelectedTable }: any) {
             <div>👥 {t.capacity}</div>
 
             {/* Status */}
-            <div
-              style={{
-                marginTop: 5,
-                fontSize: 14,
-                fontFamily: "sans-serif",
-              }}>
+            <div className="table-status">
               {t.status}
             </div>
           </div>

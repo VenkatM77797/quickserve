@@ -1,0 +1,56 @@
+.dashboard-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: Poppins, sans-serif;
+  background: linear-gradient(135deg, #8458B3, #a0d2eb);
+  color: white;
+}
+
+.dashboard-title {
+  font-size: 3rem;
+  margin-bottom: 30px;
+}
+
+.button-group {
+  display: flex;
+  gap: 20px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn-dinein {
+  background-color: #a0d2eb;
+  color: #333;
+}
+
+.btn-takeout {
+  background-color: #d0bdf4;
+  color: #333;
+}
+
+.btn-analytics {
+  background-color: #8458B3;
+  color: white;
+}
+
+.btn-history {
+  background-color: #f7d794;
+  color: #333;
+}

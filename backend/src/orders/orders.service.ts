@@ -21,7 +21,6 @@ export class OrdersService {
         data: {status: 'OCCUPIED'},
       });
     }
-
     return order;
   }
 
@@ -98,4 +97,45 @@ export class OrdersService {
   });
 }
 
+  async getOrderHistory(filters: {
+    date?: string;
+    type?: string;
+    status?: string;
+  }) {
+    const where: any = {};
+
+    if (filters.type) {
+      where.type = filters.type;
+    }
+
+    if (filters.status) {
+      where.status = filters.status;
+    }
+
+    if (filters.date) {
+      const start = new Date(filters.date);
+      const end = new Date(filters.date);
+      end.setDate(end.getDate()+1);
+
+      where.createdAt = {
+        gte: start,
+        lt: end,
+      };
+    }
+
+    return this.prisma.order.findMany({
+      where,
+      include: {
+        table: true,
+        items: {
+          include: {
+            menuItem: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      }
+    });
+  }
 }

@@ -1,0 +1,99 @@
+/* Main container */
+.analytics-container {
+  padding: 20px;
+  background: #e5eaf5;
+  min-height: 100vh;
+  font-family: Poppins, sans-serif;
+}
+
+/* Title */
+.analytics-title {
+  color: #8458b3;
+  font-weight: bold;
+}
+
+/* Cards grid */
+.analytics-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* card */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Table section */
+.table-container {
+  margin-top: 30px;
+}
+
+.back-btn {
+  margin-bottom: 15px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: #d0bdf4;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.back-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Table styling */
+.analytics-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Table header */
+.analytics-table th {
+  border: 1px solid #ddd;
+  padding: 12px;
+  background: #d0bdf4;
+  font-weight: bold;
+}
+
+/* Table rows */
+.analytics-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Hover effect */
+.analytics-table tr:hover {
+  background: #f1eefc;
+}
+
+/* Responsive UI for mobule*/
+@media (max-width: 768px) {
+  .analytics-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .analytics-cards {
+    grid-template-columns: 1fr;
+  }
+}

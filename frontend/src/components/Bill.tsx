@@ -1,3 +1,5 @@
+import "./css/Bill.css";
+
 type CartItem = {
   id: number;
   name: string;
@@ -18,35 +20,21 @@ type Props = {
 
 function Bill({ cart, total, selectedTable }: Props) {
   return (
-    <div
-      style={{
-        marginTop: 15,
-        padding: 16,
-        border: "1px solid #ccc",
-        borderRadius: 15,
-        background: "white",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-      }}>
+    <div className="bill-container">
+      
       {/* Header */}
-      <h2 style={{ marginBottom: 10 }}>Bill</h2>
+      <h2 className="bill-title">Bill</h2>
 
       {/* Table info */}
       {selectedTable && (
-        <p style={{ marginBottom: 10 }}>
+        <p className="bill-table">
           Table: <strong>{selectedTable.tableNumber}</strong>
         </p>
       )}
 
       {/* Items */}
       {cart.map((item) => (
-        <div
-          key={item.id}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: 6,
-          }}
-        >
+        <div key={item.id} className="bill-item">
           <span>
             {item.name} x {item.qty}
           </span>
@@ -54,17 +42,10 @@ function Bill({ cart, total, selectedTable }: Props) {
         </div>
       ))}
 
-      <hr style={{ margin: "10px 0" }} />
+      <hr className="bill-divider" />
 
       {/* Total */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          fontWeight: "bold",
-          fontSize: "18px",
-        }}
-      >
+      <div className="bill-total">
         <span>Total</span>
         <span>₹{total}</span>
       </div>

@@ -1,0 +1,33 @@
+.bill-container {
+  margin-top: 15px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.bill-title {
+  margin-bottom: 10px;
+}
+
+.bill-table {
+  margin-bottom: 10px;
+}
+
+.bill-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.bill-divider {
+  margin: 10px 0;
+}
+
+.bill-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 18px;
+}

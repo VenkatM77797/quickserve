@@ -10,9 +10,10 @@ import { MenuModule } from './menu/menu.module';
 import { OrdersController } from './orders/orders.controller';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
-  imports: [TablesModule, PrismaModule, CategoriesModule, MenuModule, OrdersModule, PaymentsModule],
+  imports: [TablesModule, PrismaModule, CategoriesModule, MenuModule, OrdersModule, PaymentsModule, AnalyticsModule],
   controllers: [AppController],
   providers: [AppService, MenuService],
 })

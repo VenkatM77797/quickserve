@@ -2,6 +2,8 @@ import { useState } from "react";
 import Dashboard from "./components/Dashboard";
 import TableList from "./components/TableList";
 import OrderScreen from "./components/OrderScreen";
+import Analytics from "./components/Analytics";
+import OrderHistory from "./components/OrderHistory";
 
 type CartItem = {
   id: number;
@@ -94,6 +96,16 @@ function App() {
         />
       )}
 
+      {/* ANALYTICS */}
+      {screen === "analytics" && (
+        <Analytics goBack={() => setScreen("dashboard")} />
+      )}
+
+      {/* OORDER HISTORY*/}
+      {screen === "history" && (
+        <OrderHistory goBack={() => setScreen("dashboard")} />
+        )}
+
       {/* TOAST */}
       {toast && (
         <div
@@ -106,8 +118,7 @@ function App() {
             padding: "12px 18px",
             borderRadius: 8,
             boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          }}
-        >
+          }}>
           {toast}
         </div>
       )}

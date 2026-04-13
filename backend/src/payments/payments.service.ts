@@ -22,9 +22,7 @@ export class PaymentsService {
     }
 
     const total = order.items.reduce(
-      (sum, item) => sum + Number(item.lineTotal),
-      0,
-    );
+      (sum, item) => sum + Number(item.lineTotal),0, );
 
     const payment = await this.prisma.payment.create({
       data: {
@@ -45,11 +43,9 @@ export class PaymentsService {
         data: { status: 'AVAILABLE' },
       });
     }
-
     return payment;
   }
 
-  // ✅ ADD THIS METHOD
   async getPayment(orderId: string) {
     return this.prisma.payment.findUnique({
       where: { orderId },
