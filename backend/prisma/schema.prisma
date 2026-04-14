@@ -9,7 +9,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 enum TableStatus {
@@ -35,6 +35,11 @@ enum PaymentMethod {
   UPI
 }
 
+enum UserRole {
+  MANAGER
+  EMPLOYEE
+}
+
 model RestaurantTable {
   id          String      @id @default(uuid())
   tableNumber Int         @unique
@@ -55,7 +60,7 @@ model Category {
 model MenuItem {
   id        String   @id @default(uuid())
   name      String
-  price     Decimal
+  price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
 
   categoryId String
@@ -78,8 +83,8 @@ model Order {
 model OrderItem {
   id         String   @id @default(uuid())
   quantity   Int
-  unitPrice  Decimal
-  lineTotal  Decimal
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  lineTotal  Decimal  @db.Decimal(10, 2)
   createdAt  DateTime @default(now())
   orderId    String
   order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -90,8 +95,18 @@ model OrderItem {
 model Payment {
   id      String        @id @default(uuid())
   method  PaymentMethod
-  amount  Decimal
+  amount  Decimal       @db.Decimal(10, 2)
   paidAt  DateTime      @default(now())
   orderId String        @unique
   order   Order         @relation(fields: [orderId], references: [id])
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  googleId  String   @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
