@@ -129,7 +129,6 @@ function OrderScreen({ selectedTable, goBack, showToast }: any) {
         }),
       });
     }
-
     showToast("Order placed!");
   };
 
