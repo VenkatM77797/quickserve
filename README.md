@@ -4,7 +4,9 @@ A full-stack restaurant management system built to handle dine-in and takeout or
 
 ---
 dkn
-## 🚀 Features
+## 🚀 Featurescdvdnvknwkv
+
+
 
 - 🍽️ Create **Dine-in** and **Takeout** orders
 - 🪑 Manage table status (Available / Occupied)
