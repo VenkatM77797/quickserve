@@ -3,7 +3,7 @@
 A full-stack restaurant management system built to handle dine-in and takeout orders, table management, billing, and payments efficiently. Designed for speed, simplicity, and real-world restaurant workflows.
 
 ---
-
+dkn
 ## 🚀 Features
 
 - 🍽️ Create **Dine-in** and **Takeout** orders
