@@ -1,143 +1,279 @@
 # 🍽️ QuickServe – Restaurant Management System
 
-A full-stack restaurant management system built to handle dine-in and takeout orders, table management, billing, and payments efficiently. Designed for speed, simplicity, and real-world restaurant workflows.
+A full-stack restaurant management system designed to handle real-world restaurant workflows including dine-in, takeout, billing, authentication, and analytics. Built for speed, scalability, and clean user experience.
 
 ---
-dkn
-## 🚀 Featurescdvdnvknwkv
 
+## 🚀 Features
 
-cefnew kqnk
-- 🍽️ Create **Dine-in** and **Takeout** ordersc c c
-- 
-- 🪑 Manage table status (Available / Occupied)
-- 🛒 Add/remove items from cart with quantity control
-- 🧾 Generate dynamic bills
-- 💳 Process payments (Cash)
-- 📋 View and manage active orders
-- 🔄 Real-time UI updates
-- ⚡ Fast and responsive interface
+### 🧾 Order Management
+
+* Create **Dine-in** and **Takeout** orders
+* Add/remove items with quantity control
+* Automatic order type detection
+* Real-time cart updates
+
+### 🪑 Table Management
+
+* View all restaurant tables
+* Track table status (**Available / Occupied / Reserved**)
+* Auto-update table status on order creation
+
+### 💳 Billing & Payments
+
+* Generate dynamic bills
+* Calculate totals automatically
+* Complete payments (Cash)
+* Reset system after payment
+
+### 🔐 Authentication (OAuth)
+
+* Google OAuth login
+* Role-based access (**Manager / Employee**)
+* Secure JWT authentication (stored in cookies)
+* Protected routes (Analytics & History only for Manager)
+
+### 📊 Analytics & History
+
+* View order analytics (Manager only)
+* Filter order history by:
+
+  * Date
+  * Order Type (Dine-in / Takeout)
+  * Status
+* Backend-powered reporting
+
+### ⚡ UI/UX
+
+* Fast and responsive interface
+* Toast notifications for actions
+* Clean component-based design
+* Non-inline CSS structure
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- React.js
-- TypeScript
-- HTML, CSS
-- Fetch API
+
+* React.js (Vite)
+* TypeScript
+* CSS (modular structure)
+* Fetch API
 
 ### Backend
-- Node.js
-- NestJS
-- Prisma ORM
-- PostgreSQL
+
+* Node.js
+* NestJS
+* Prisma ORM
+* PostgreSQL
+* Passport.js (Google OAuth)
+* JWT Authentication
 
 ---
 
 ## 📁 Project Structure
+
+```
 quickserve/
 │
-├── backend/ # Backend (NestJS API)
-│ ├── src/
-│ │ ├── orders/
-│ │ ├── payments/
-│ │ ├── menu/
-│ │ ├── tables/
-│ │ ├── prisma/
-│ │ └── main.ts
-│ └── prisma/
-│ └── schema.prisma
+├── backend/                  # NestJS API
+│   ├── src/
+│   │   ├── auth/             # Authentication (OAuth + JWT)
+│   │   ├── orders/
+│   │   ├── payments/
+│   │   ├── analytics/
+│   │   ├── tables/
+│   │   ├── prisma/
+│   │   └── main.ts
+│   └── prisma/
+│       └── schema.prisma
 │
-├── frontend/ # React Frontend
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── Menu.tsx
-│ │ │ ├── Cart.tsx
-│ │ │ ├── Bill.tsx
-│ │ │ └── OrderScreen.tsx
-│ │ └── App.tsx
+├── frontend/                # React App
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── TableList.tsx
+│   │   │   ├── OrderScreen.tsx
+│   │   │   ├── Analytics.tsx
+│   │   │   ├── OrderHistory.tsx
+│   │   │   └── Login.tsx
+│   │   ├── css/
+│   │   └── App.tsx
 │
 └── README.md
-
+```
 
 ---
 
 ## ⚙️ Installation & Setup
 
-### 1. Clone the repository
+### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/quickserve.git
+git clone https://github.com/VenkatM77797/quickserve.git
 cd quickserve
 ```
 
-2. Setup Database (PostgreSQL)
+---
+
+### 2. Setup Database (PostgreSQL)
+
+```sql
 CREATE DATABASE quickserve_db;
+```
 
 Run migrations:
-```
+
+```bash
 cd backend
 npx prisma migrate dev
 ```
 
-3. Setup Backend
-```
+---
+
+### 3. Setup Backend
+
+```bash
 cd backend
 npm install
 npm run start:dev
 ```
+
 Backend runs on:
+
 ```
 http://localhost:3000
 ```
-4. Setup Frontend
+
+---
+
+### 4. Setup Frontend
+
+Create `.env` inside `frontend/`:
+
 ```
+VITE_API_URL=http://localhost:3000
+```
+
+Then run:
+
+```bash
 cd frontend
 npm install
-npm start
+npm run dev
 ```
+
 Frontend runs on:
+
 ```
-http://localhost:3001
+http://localhost:5173
 ```
-🔗 API Endpoints
-Orders
-POST /orders → Create order (Dine-in / Takeout)
-GET /orders → Get all orders
-GET /orders/table/:id → Get open order by table
-POST /orders/items → Add item
-Payments
-POST /payments → Complete payment
-Tables
-PATCH /tables/:id/status → Update status
-Menu
-GET /categories → Get menu
 
-🧠 Architecture
-Controllers → Services → Prisma → Database
-🔥 Key Logic
-tableId present → DINE_IN
-tableId absent → TAKEOUT
-Table auto updates status
-Bill generated before payment
-Payment completes order
+---
 
+## 🔗 API Overview
 
-🚀 Deployment
+### Auth
 
-Backend → Render / Railway
-Frontend → Vercel / Netlify
-https://quickserve-21f9fn3b8-venkatm77797s-projects.vercel.app/
+* `GET /auth/google` → Start OAuth login
+* `GET /auth/google/callback` → OAuth callback
+* `GET /auth/profile` → Get logged-in user
+* `GET /auth/logout` → Logout
 
-📌 Future Improvements
-Authentication
-Online payments
-Analytics dashboard
-Kitchen display system
-Mobile UI improvements
+### Orders
 
-👨‍💻 Author
+* `POST /orders` → Create order
+* `GET /orders` → Get all orders
+* `GET /orders/history` → Filter order history
+* `POST /orders/items` → Add item
 
-Venkat
+### Payments
+
+* `POST /payments` → Complete payment
+
+### Tables
+
+* `GET /tables` → Get all tables
+* `PATCH /tables/:id/status` → Update status
+
+### Analytics
+
+* `GET /analytics` → Get analytics data
+
+---
+
+## 🧠 Architecture
+
+```
+Controller → Service → Prisma → Database
+```
+
+### 🔥 Core Logic
+
+* `tableId present` → DINE_IN
+* `tableId absent` → TAKEOUT
+* Table auto updates on order creation
+* Bill must be generated before payment
+* Payment completes order and resets state
+
+---
+
+## 🚀 Deployment
+
+### Frontend (Vercel)
+
+👉 https://quickserve-21f9fn3b8-venkatm77797s-projects.vercel.app/
+
+### Backend
+
+* Render / Railway recommended
+
+---
+
+## ⚠️ Environment Variables
+
+### Frontend (`.env`)
+
+```
+VITE_API_URL=http://localhost:3000
+```
+
+### Backend (`.env`)
+
+```
+DATABASE_URL=your_postgres_url
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+JWT_SECRET=your_secret
+```
+
+---
+
+## 📌 Future Improvements
+
+* Online Payments (UPI / Card)
+* Role-based dashboards
+* Kitchen Display System (KDS)
+* Real-time updates with WebSockets
+* Mobile-first UI
+* Inventory management
+
+---
+
+## 👨‍💻 Author
+
+**Venkat**
+
+---
+
+## ⭐ Notes
+
+This project demonstrates:
+
+* Full-stack architecture
+* OAuth + JWT authentication
+* Real-world restaurant workflow logic
+* Clean frontend-backend integration
+
+---
