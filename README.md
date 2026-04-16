@@ -8,7 +8,8 @@ dkn
 
 
 
-- 🍽️ Create **Dine-in** and **Takeout** orders
+- 🍽️ Create **Dine-in** and **Takeout** ordersc c c
+- 
 - 🪑 Manage table status (Available / Occupied)
 - 🛒 Add/remove items from cart with quantity control
 - 🧾 Generate dynamic bills
