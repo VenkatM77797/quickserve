@@ -11,9 +11,10 @@ import { OrdersController } from './orders/orders.controller';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TablesModule, PrismaModule, CategoriesModule, MenuModule, OrdersModule, PaymentsModule, AnalyticsModule],
+  imports: [TablesModule, PrismaModule, CategoriesModule, MenuModule, OrdersModule, PaymentsModule, AnalyticsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, MenuService],
 })
