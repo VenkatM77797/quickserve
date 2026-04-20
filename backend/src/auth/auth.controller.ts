@@ -1,66 +1,54 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Req,
-  Res,
-  UseGuards,
-  BadRequestException,
-} from '@nestjs/common';
-import type { Request, Response } from 'express';
-import { AuthGuard } from '@nestjs/passport';
+import {Body,Controller,Get,Post,Req,UseGuards,Delete, Param,} from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
-import { GoogleAuthGuard } from './google-auth.guard';
+import { SignupDto } from './dto/signup.dto';
+import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { Roles } from './roles.decorator';
+import { RolesGuard } from './roles.guard';
+
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('google')
-  @UseGuards(GoogleAuthGuard)
-  async googleAuth(@Query('role') role: string) {
-    if (!role || !['MANAGER', 'EMPLOYEE'].includes(role)) {
-      throw new BadRequestException('Invalid role');
-    }
-    return;
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post('login')
+  login(@Body() dto: LoginDto) {
+    return this.authService.login(dto);
   }
 
-  @Get('google/callback')
-  @UseGuards(GoogleAuthGuard)
-  async googleAuthRedirect(@Req() req: Request & { user: any }, @Res() res: Response) {
-    const result = await this.authService.googleLogin(req.user);
-
-    if (result.error) {
-      return res.redirect(
-        `http://localhost:5173/?error=${encodeURIComponent(result.error)}`,
-      );
-    }
-
-    res.cookie('token', result.token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    return res.redirect('http://localhost:5173/');
-  }
-
-  @Get('profile')
-  @UseGuards(AuthGuard('jwt'))
-  getProfile(@Req() req: Request & { user: any }) {
+  @UseGuards(JwtAuthGuard)
+  @Get('Profile')
+  getProfile(@Req() req: any) {
     return req.user;
   }
 
-  @Get('logout')
-  logout(@Res() res: Response) {
-    res.clearCookie('token', {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MANAGER')
+  @Post('create-manager')
+  createManager(@Body() dto: SignupDto) {
+    return this.authService.createManager(dto);
+  }
 
-    return res.redirect('http://localhost:5173/');
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('MANAGER')
+  @Post('create-employee')
+  createEmployee(@Body() dto: SignupDto) {
+    return this.authService.createEmployee(dto);
+  }
+
+  @Get("users")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("MANAGER")
+  getAllUsers() {
+    return this.authService.getAllUsers();
+  }
+
+  @Delete("users/:id")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("MANAGER")
+  deleteUser(@Param("id") id: string) {
+    return this.authService.deleteUser(id);
   }
 }

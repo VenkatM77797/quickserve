@@ -1,40 +1,101 @@
 import "./css/Dashboard.css";
 
-function Dashboard({ setScreen }: any) {
+type Screen =
+  | "dashboard"
+  | "tables"
+  | "takeout"
+  | "order"
+  | "analytics"
+  | "history"
+  | "create-manager"
+  | "createEmployee"
+  | "users";
+
+type DashboardProps = {
+  setScreen: (screen: Screen) => void;
+  userRole: string | null;
+  userName: string | null;
+  onLogout: () => void;
+};
+
+function Dashboard({
+  setScreen,
+  userRole,
+  userName,
+  onLogout,
+}: DashboardProps) {
   return (
     <div className="dashboard-container">
-      
-      {/* Title */}
-      <h1 className="dashboard-title">
-        Welcome to QuickServe
-      </h1>
+      <div className="dashboard-header">
+        <div className="dashboard-user-block">
+          <h1 className="dashboard-title">Welcome to QuickServe</h1>
 
-      {/* Buttons */}
+          {userName && (
+            <p className="dashboard-subtitle">
+              Logged in as: <strong>{userName}</strong>
+              {userRole && <> ({userRole})</>}
+            </p>
+          )}
+        </div>
+
+        <button onClick={onLogout} className="logout-btn">
+          Logout
+        </button>
+      </div>
+
       <div className="button-group">
-
         <button
           onClick={() => setScreen("tables")}
-          className="btn btn-dinein">
+          className="btn btn-dinein"
+        >
           Dine-In
         </button>
 
         <button
           onClick={() => setScreen("takeout")}
-          className="btn btn-takeout">
+          className="btn btn-takeout"
+        >
           Take-out
         </button>
 
-        <button
-          onClick={() => setScreen("analytics")}
-          className="btn btn-analytics">
-          Analytics
-        </button>
+        {userRole === "MANAGER" && (
+          <>
+            <button
+              className="btn btn-analytics"
+              onClick={() => setScreen("analytics")}
+            >
+              Analytics
+            </button>
 
-        <button
-        onClick={() => setScreen("history")}
-        className="btn btn-history">
-          Order History
-          </button>
+            <button
+              className="btn btn-history"
+              onClick={() => setScreen("history")}
+            >
+              Order History
+            </button>
+
+            <button
+              className="btn btn-add-manager"
+              onClick={() => setScreen("create-manager")}
+            >
+              Add Manager
+            </button>
+
+            <button
+              className="btn btn-add-employee"
+              onClick={() => setScreen("createEmployee")}
+            >
+              Add Employee
+            </button>
+
+            <button
+              className="btn btn-users"
+              onClick={() => setScreen("users")}
+            >
+              View Users
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

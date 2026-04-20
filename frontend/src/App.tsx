@@ -1,128 +1,194 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import "./App.css";
 import Dashboard from "./components/Dashboard";
 import TableList from "./components/TableList";
 import OrderScreen from "./components/OrderScreen";
 import Analytics from "./components/Analytics";
 import OrderHistory from "./components/OrderHistory";
+import Login from "./components/Login";
+import CreateManager from "./components/CreateManager";
+import CreateEmployee from "./components/CreateEmployee";
+import UserList from "./components/UserList";
 
-type CartItem = {
-  id: number;
-  name: string;
-  price: number;
-  qty: number;
-};
+const API = import.meta.env.VITE_API_URL;
 
-type Table = {
-  id: number;
+type Screen =
+  | "dashboard"
+  | "tables"
+  | "takeout"
+  | "order"
+  | "analytics"
+  | "history"
+  | "create-manager"
+  | "createEmployee"
+  | "users";
+
+type User = {
+  id: string;
   name: string;
+  email: string;
+  role: "MANAGER" | "EMPLOYEE";
 };
 
 function App() {
-  const [screen, setScreen] = useState("dashboard");
-  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
-
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [order, setOrder] = useState<any>(null);
-
+  const [screen, setScreen] = useState<Screen>("dashboard");
+  const [selectedTable, setSelectedTable] = useState<any>(null);
   const [toast, setToast] = useState("");
-  const [billGenerated, setBillGenerated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
-  const showToast = (msg: string) => {
-    setToast(msg);
+  const showToast = (message: string) => {
+    setToast(message);
     setTimeout(() => setToast(""), 3000);
   };
 
-  const generateBill = () => {
-    if (!cart || cart.length === 0) {
-      showToast("No items to generate bill");
-      return;
-    }
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-    const total = cart.reduce(
-      (sum, item) => sum + item.price * item.qty,
-      0
-    );
+        if (!token) {
+          setUser(null);
+          return;
+        }
 
-    const newOrder = {
-      table: selectedTable,
-      items: cart,
-      total,
-      time: new Date().toLocaleString(),
+        const res = await fetch(`${API}/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Invalid token");
+        }
+
+        const data = await res.json();
+        setUser(data);
+      } catch (err) {
+        console.log("Auth error:", err);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+      }
     };
 
-    setOrder(newOrder);
-    setBillGenerated(true);
-    showToast("Bill generated");
+    fetchUser();
+  }, []);
+
+  const isManager = user?.role === "MANAGER";
+
+  const managerOnlyScreens: Screen[] = [
+    "analytics",
+    "history",
+    "create-manager",
+    "createEmployee",
+    "users",
+  ];
+
+  const canAccessScreen = (target: Screen) => {
+    if (!user) return false;
+
+    if (managerOnlyScreens.includes(target) && !isManager) {
+      return false;
+    }
+
+    return true;
   };
 
-  return (
-    <>
-      {/* DASHBOARD */}
-      {screen === "dashboard" && <Dashboard setScreen={setScreen} />}
+  const safeSetScreen = (target: Screen) => {
+    if (canAccessScreen(target)) {
+      setScreen(target);
+    } else {
+      showToast("Access denied");
+      setScreen("dashboard");
+    }
+  };
 
-      {/* TABLE LIST */}
+  useEffect(() => {
+    if (!user) return;
+
+    if (!canAccessScreen(screen)) {
+      setScreen("dashboard");
+    }
+  }, [screen, user]);
+
+  const handleLoginSuccess = (loggedInUser: User) => {
+    setUser(loggedInUser);
+    setScreen("dashboard");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setScreen("dashboard");
+    setSelectedTable(null);
+  };
+
+  if (!user) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  return (
+    <div className="app-shell">
+      {toast && <div className="app-toast">{toast}</div>}
+
+      {screen === "dashboard" && (
+        <Dashboard
+          setScreen={safeSetScreen}
+          userRole={user.role}
+          userName={user.name}
+          onLogout={handleLogout}
+        />
+      )}
+
       {screen === "tables" && (
         <TableList
-          setScreen={setScreen}
+          setScreen={safeSetScreen}
           setSelectedTable={setSelectedTable}
         />
       )}
 
-      {/* TAKEOUT */}
-      {screen === "takeout" && (
-        <OrderScreen
-          selectedTable={null}
-          goBack={() => setScreen("dashboard")}
-          showToast={showToast}
-          cart={cart}
-          setCart={setCart}
-          generateBill={generateBill}
-          billGenerated={billGenerated}
-          order={order}
-        />
-      )}
-
-      {/* DINE-IN ORDER */}
       {screen === "order" && (
         <OrderScreen
           selectedTable={selectedTable}
+          setSelectedTable={setSelectedTable}
           goBack={() => setScreen("tables")}
           showToast={showToast}
-          cart={cart}
-          setCart={setCart}
-          generateBill={generateBill}
-          billGenerated={billGenerated}
-          order={order}
         />
       )}
 
-      {/* ANALYTICS */}
-      {screen === "analytics" && (
+      {screen === "takeout" && (
+        <OrderScreen
+          selectedTable={null}
+          setSelectedTable={setSelectedTable}
+          goBack={() => setScreen("dashboard")}
+          showToast={showToast}
+        />
+      )}
+
+      {screen === "analytics" && user.role === "MANAGER" && (
         <Analytics goBack={() => setScreen("dashboard")} />
       )}
 
-      {/* OORDER HISTORY*/}
-      {screen === "history" && (
+      {screen === "history" && user.role === "MANAGER" && (
         <OrderHistory goBack={() => setScreen("dashboard")} />
-        )}
-
-      {/* TOAST */}
-      {toast && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: 20,
-            right: 20,
-            background: "#111",
-            color: "white",
-            padding: "12px 18px",
-            borderRadius: 8,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          }}>
-          {toast}
-        </div>
       )}
-    </>
+
+      {screen === "create-manager" && user.role === "MANAGER" && (
+        <CreateManager goBack={() => setScreen("dashboard")} />
+      )}
+
+      {screen === "createEmployee" && user.role === "MANAGER" && (
+        <CreateEmployee goBack={() => setScreen("dashboard")} />
+      )}
+
+      {screen === "users" && user.role === "MANAGER" && (
+        <UserList
+          goBack={() => setScreen("dashboard")}
+          showToast={showToast}
+        />
+      )}
+    </div>
   );
 }
 

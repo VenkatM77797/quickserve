@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./css/OrderHistory.css";
 
-const API = "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL;
 
 type OrderItem = {
   id: string;
@@ -19,7 +19,7 @@ type Order = {
   createdAt: string;
   table?: {
     tableNumber?: number;
-  } | null;                                                                 
+  } | null;
   items: OrderItem[];
 };
 
@@ -32,17 +32,58 @@ function OrderHistory({ goBack }: Props) {
   const [date, setDate] = useState("");
   const [type, setType] = useState("");
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const fetchHistory = async () => {
-    const params = new URLSearchParams();
+    try {
+      setLoading(true);
+      setError("");
 
-    if (date) params.append("date", date);
-    if (type) params.append("type", type);
-    if (status) params.append("status", status);
+      const params = new URLSearchParams();
+      if (date) params.append("date", date);
+      if (type) params.append("type", type);
+      if (status) params.append("status", status);
 
-    const res = await fetch(`${API}/orders/history?${params.toString()}`);
-    const data = await res.json();
-    setOrders(data);
+      const url = `${API}/orders/history${
+        params.toString() ? `?${params.toString()}` : ""
+      }`;
+
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const text = await res.text();
+
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.reload();
+        return;
+      }
+
+      if (res.status === 403) {
+        throw new Error("You are not authorized to view order history");
+      }
+
+      if (!res.ok) {
+        throw new Error(`Failed to load order history: ${res.status} ${text}`);
+      }
+
+      const data = JSON.parse(text);
+      setOrders(Array.isArray(data) ? data : []);
+    } catch (err: any) {
+      console.error("Failed to load order history", err);
+      setError(err.message || "Failed to load order history");
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -62,12 +103,14 @@ function OrderHistory({ goBack }: Props) {
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="history-input"/>
+          className="history-input"
+        />
 
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="history-input">
+          className="history-input"
+        >
           <option value="">All Types</option>
           <option value="DINE_IN">Dine-in</option>
           <option value="TAKEAWAY">Take-out</option>
@@ -76,7 +119,8 @@ function OrderHistory({ goBack }: Props) {
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="history-input">
+          className="history-input"
+        >
           <option value="">All Status</option>
           <option value="OPEN">Open</option>
           <option value="COMPLETED">Completed</option>
@@ -88,58 +132,61 @@ function OrderHistory({ goBack }: Props) {
         </button>
       </div>
 
-      <div className="history-list">
-        {orders.length === 0 ? (
-          <p>No orders found.</p>
-        ) : (
-          orders.map((order) => {
-            const total = order.items.reduce(
-              (sum, item) => sum + Number(item.lineTotal),
-              0
-            );
+      {loading && <p>Loading order history...</p>}
+      {error && <p>{error}</p>}
 
-            return (
-              <div key={order.id} className="history-card">
-                <div className="history-card-header">
-                  <h3>Order ID: {order.id}</h3>
-                  <span>{new Date(order.createdAt).toLocaleString()}</span>
+      {!loading && !error && (
+        <div className="history-list">
+          {orders.length === 0 ? (
+            <p>No orders found.</p>
+          ) : (
+            orders.map((order) => {
+              const total = (order.items || []).reduce(
+                (sum, item) => sum + Number(item.lineTotal || 0),
+                0
+              );
+
+              return (
+                <div key={order.id} className="history-card">
+                  <div className="history-card-header">
+                    <h3>Order ID: {order.id}</h3>
+                    <span>{new Date(order.createdAt).toLocaleString()}</span>
+                  </div>
+
+                  <p>
+                    <strong>Type:</strong> {order.type}
+                  </p>
+
+                  <p>
+                    <strong>Status:</strong> {order.status}
+                  </p>
+
+                  <p>
+                    <strong>Table:</strong> {order.table?.tableNumber ?? "Takeout"}
+                  </p>
+
+                  <div className="history-items">
+                    <strong>Items:</strong>
+                    <ul>
+                      {(order.items || []).map((item) => (
+                        <li key={item.id}>
+                          {item.menuItem?.name ?? "Unknown Item"} x {item.quantity} --- ₹
+                          {item.lineTotal}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <p className="history-total">
+                    <strong>Total:</strong> ₹{total}
+                  </p>
                 </div>
-
-                <p>
-                  <strong>Type:</strong> {order.type}
-                </p>
-
-                <p>
-                  <strong>Status:</strong> {order.status}
-                </p>
-
-                <p>
-                  <strong>Table:</strong>{" "}
-                  {order.table?.tableNumber ?? "Takeout"}
-                </p>
-
-                <div className="history-items">
-                  <strong>Items:</strong>
-                  <ul>
-                    {order.items.map((item) => (
-                      <li key={item.id}>
-                        {item.menuItem.name} x {item.quantity} --- ₹
-                        {item.lineTotal}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <p className="history-total">
-                  <strong>Total:</strong> ₹{total}
-                </p>
-              </div>
-            );
-          })
-        )}
-      </div>
+              );
+            })
+          )}
+        </div>
+      )}
     </div>
   );
 }
-
 export default OrderHistory;

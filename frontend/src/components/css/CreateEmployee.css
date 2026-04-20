@@ -1,0 +1,112 @@
+.employee-container {
+  min-height: 100vh;
+  padding: 20px;
+  background: #e5eaf5;
+  box-sizing: border-box;
+  font-family: Poppins, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.employee-card {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  padding: 55px 28px 28px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.employee-back-btn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: #d0bdf4;
+  color: #2d1f46;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.employee-back-btn:hover {
+  background-color: #c3a9ef;
+  transform: translateY(-1px);
+}
+
+.employee-title {
+  text-align: center;
+  color: #8458b3;
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.employee-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-input {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #d6d6d6;
+  outline: none;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.employee-input:focus {
+  border-color: #8458b3;
+  box-shadow: 0 0 0 3px rgba(132, 88, 179, 0.15);
+}
+
+.employee-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 10px;
+  background-color: #8458b3;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(132, 88, 179, 0.28);
+}
+
+.employee-btn:hover {
+  background-color: #7348a8;
+  transform: translateY(-1px);
+}
+
+.employee-btn:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.employee-success {
+  color: #1f8b4c;
+  margin-top: 14px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.employee-error {
+  color: #d93025;
+  margin-top: 14px;
+  font-size: 14px;
+  text-align: center;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./css/TableList.css";
 
-const API = "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL;
 
 function TableList({ setScreen, setSelectedTable }: any) {
   const [tables, setTables] = useState<any[]>([]);
@@ -11,14 +11,30 @@ function TableList({ setScreen, setSelectedTable }: any) {
   }, []);
 
   const fetchTables = async () => {
-    const res = await fetch(`${API}/tables`);
-    setTables(await res.json());
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API}/tables`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to load tables");
+      }
+
+      const data = await res.json();
+      setTables(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch tables", error);
+      setTables([]);
+    }
   };
 
   return (
     <div className="table-container">
-      
-      {/* Back button */}
       <button
         onClick={() => setScreen("dashboard")}
         className="back-btn"
@@ -26,10 +42,8 @@ function TableList({ setScreen, setSelectedTable }: any) {
         Back
       </button>
 
-      {/* Title */}
       <h1 className="table-title">Tables</h1>
 
-      {/* Grid */}
       <div className="table-grid">
         {tables.map((t) => (
           <div
@@ -44,15 +58,12 @@ function TableList({ setScreen, setSelectedTable }: any) {
                 : "table-occupied"
             }`}
           >
-            {/* Table number */}
             <div className="table-number">
               Table {t.tableNumber}
             </div>
 
-            {/* Capacity */}
             <div>👥 {t.capacity}</div>
 
-            {/* Status */}
             <div className="table-status">
               {t.status}
             </div>

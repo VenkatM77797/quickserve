@@ -1,0 +1,224 @@
+.users-container {
+  min-height: 100vh;
+  padding: 20px;
+  background: #e5eaf5;
+  font-family: Poppins, sans-serif;
+  box-sizing: border-box;
+}
+
+.users-back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: #d0bdf4;
+  color: #2d1f46;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.users-back-btn:hover {
+  background-color: #c3a9ef;
+  transform: translateY(-1px);
+}
+
+.users-title {
+  text-align: center;
+  color: #8458b3;
+  margin: 20px 0 24px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.users-toolbar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.sort-label {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #333;
+  font-weight: 600;
+}
+
+.sort-select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.sort-select:focus {
+  border-color: #8458b3;
+  box-shadow: 0 0 0 3px rgba(132, 88, 179, 0.15);
+}
+
+.users-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.user-card {
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+}
+
+.user-card h3 {
+  margin: 0 0 8px;
+  color: #333;
+  font-size: 18px;
+}
+
+.user-card p {
+  margin: 0 0 14px;
+  color: #666;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.user-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.manager {
+  background-color: #8458b3;
+  color: white;
+}
+
+.employee {
+  background-color: #4caf50;
+  color: white;
+}
+
+.delete-user-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #e74c3c;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.delete-user-btn:hover {
+  background: #d63b2c;
+  transform: translateY(-1px);
+}
+
+.delete-user-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.users-error {
+  color: #d93025;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 16px;
+}
+
+.users-info {
+  text-align: center;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.confirm-box {
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-box h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.confirm-box p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.confirm-no {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #ccc;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.confirm-yes {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #e74c3c;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.confirm-yes:hover {
+  background: #d63b2c;
+}

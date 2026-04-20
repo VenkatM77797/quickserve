@@ -1,34 +1,73 @@
 .dashboard-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  font-family: Poppins, sans-serif;
-  background: linear-gradient(135deg, #8458B3, #a0d2eb);
+  background: linear-gradient(135deg, #8458b3, #a0d2eb);
   color: white;
+  padding: 30px;
+  box-sizing: border-box;
+  font-family: Poppins, sans-serif;
+  text-align: center;
+  position: relative;
+}
+
+.dashboard-title {
+  font-size: 48px;
+  font-weight: 800;
+  text-align: center;
+
+  line-height: 1.2;
+  padding: 10px 0;
+
+  background: linear-gradient(90deg, #4c1d95, #7c3aed, #4c1d95);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dashboard-header {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.dashboard-user-block {
+  text-align: center;
 }
 
 .dashboard-title {
   font-size: 3rem;
-  margin-bottom: 30px;
+  margin-bottom: 12px;
+  color: #111;
+}
+
+.dashboard-subtitle {
+  margin: 0;
+  font-size: 16px;
+  color: #f7f7f7;
 }
 
 .button-group {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .btn {
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
   border: none;
   font-size: 16px;
   cursor: pointer;
   font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.7);
-  transition: 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: transform 0.3s ease, opacity 0.2s ease;
 }
 
 .btn:hover {
@@ -40,17 +79,103 @@
   color: #333;
 }
 
+.btn-dinein:hover {
+  background: #65b2d8;
+}
+
 .btn-takeout {
-  background-color: #d0bdf4;
+  background-color: #a0d2eb;
   color: #333;
+}
+
+.btn-takeout:hover {
+  background: #65b2d8;
 }
 
 .btn-analytics {
-  background-color: #8458B3;
-  color: white;
+  background-color: #a0d2eb;
+  color: #333;
+}
+
+.btn-analytics:hover {
+  background: #65b2d8;
 }
 
 .btn-history {
-  background-color: #f7d794;
+  background-color: #a0d2eb;
   color: #333;
+}
+
+.btn-history:hover {
+  background: #65b2d8;
+}
+
+.btn-add-manager {
+  background-color: #a0d2eb;
+  color: #333;
+}
+
+.btn-add-manager:hover {
+  background-color: #65b2d8;
+}
+
+.btn-add-employee {
+  background-color: #a0d2eb;
+  color: #333;
+}
+
+.btn-add-employee:hover {
+  background-color: #65b2d8;
+}
+
+.btn-users {
+  background: #a0d2eb;
+  color: #333;
+}
+.btn-users:hover {
+  background: #65b2d8;
+}
+
+.logout-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(250, 248, 248, 0.4);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  font-weight: bold;
+  color: #111;
+}
+
+.logout-btn:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 2.2rem;
+  }
+
+  .dashboard-header {
+    padding-top: 60px;
+  }
+
+  .logout-btn {
+    top: 0;
+    right: 0;
+  }
+
+  .button-group {
+    gap: 14px;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 220px;
+  }
+  
 }

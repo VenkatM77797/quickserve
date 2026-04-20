@@ -1,34 +1,34 @@
 import { Module } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { GoogleStrategy } from './google.strategy';
-import { JwtStrategy } from './jwt.strategy';
 import { PrismaService } from '../prisma/prisma.service';
+import { JwtStrategy } from './jwt.strategy';
 import { RolesGuard } from './roles.guard';
 
 @Module({
   imports: [
-    PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
+    ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET');
+
+        if (!secret) {
+          throw new Error('JWT_SECRET is missing in environment variables');
+        }
+
+        return {
+          secret,
+          signOptions: { expiresIn: '1d' },
+        };
+      },
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    GoogleStrategy,
-    JwtStrategy,
-    PrismaService,
-    RolesGuard,
-  ],
-  exports: [
-    AuthService,
-    PassportModule,
-    JwtModule,
-    RolesGuard,
-  ],
+  providers: [AuthService, PrismaService, JwtStrategy, RolesGuard],
+  exports: [AuthService],
 })
 export class AuthModule {}

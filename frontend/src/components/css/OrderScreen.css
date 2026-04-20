@@ -18,13 +18,17 @@
 }
 
 .order-header {
-  display: flex;
+  display: absolute;
   justify-content: space-between;
   align-items: center;
 }
 
 .order-title {
+  text-align: center;
   color: #8458B3;
+  font-family: Poppins, sans-serif;
+  font-weight: bold;
+  font-size: 35px;
 }
 
 .btn {

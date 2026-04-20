@@ -6,6 +6,7 @@
 }
 
 .history-back-btn {
+  display: -webkit-flex;
   margin-bottom: 15px;
   padding: 8px 14px;
   border-radius: 6px;
@@ -23,6 +24,9 @@
 .history-title {
   color: #8458b3;
   margin-bottom: 20px;
+  font-family: Poppins, sans-serif;
+  font-weight: bold;
+  font-size: 30px;
 }
 
 .history-filters {

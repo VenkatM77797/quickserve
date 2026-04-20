@@ -4,13 +4,34 @@ import Cart from "./Cart";
 import Bill from "./Bill";
 import "./css/OrderScreen.css";
 
-const API = "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL;
 
-function OrderScreen({ selectedTable, goBack, showToast }: any) {
+type Props = {
+  selectedTable: any;
+  setSelectedTable: React.Dispatch<React.SetStateAction<any>>;
+  goBack: () => void;
+  showToast: (msg: string) => void;
+};
+
+function OrderScreen({
+  selectedTable,
+  setSelectedTable,
+  goBack,
+  showToast,
+}: Props) {
   const [categories, setCategories] = useState<any[]>([]);
   const [cart, setCart] = useState<any[]>([]);
   const [currentOrder, setCurrentOrder] = useState<any>(null);
   const [billGenerated, setBillGenerated] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -21,25 +42,53 @@ function OrderScreen({ selectedTable, goBack, showToast }: any) {
   }, [selectedTable]);
 
   const fetchCategories = async () => {
-    const res = await fetch(`${API}/categories`);
-    setCategories(await res.json());
+    try {
+      const res = await fetch(`${API}/categories`, {
+        headers: getAuthHeaders(),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+
+      const data = await res.json();
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+      showToast("Failed to load categories");
+    }
   };
 
   const fetchExistingOrder = async () => {
-    const res = await fetch(`${API}/orders/table/${selectedTable.id}`);
-    const data = await res.json();
-    const order = Array.isArray(data) ? data[0] : data;
-    if (!order) return;
-    setCurrentOrder(order);
+    try {
+      if (!selectedTable) return;
 
-    const cartItems = order.items.map((item: any) => ({
-      id: item.menuItem.id,
-      name: item.menuItem.name,
-      price: Number(item.unitPrice),
-      qty: item.quantity,
-    }));
+      const res = await fetch(`${API}/orders/table/${selectedTable.id}`, {
+        headers: getAuthHeaders(),
+      });
 
-    setCart(cartItems);
+      if (!res.ok) {
+        return;
+      }
+
+      const data = await res.json();
+      const order = Array.isArray(data) ? data[0] : data;
+
+      if (!order) return;
+
+      setCurrentOrder(order);
+
+      const cartItems = (order.items || []).map((item: any) => ({
+        id: item.menuItem.id,
+        name: item.menuItem.name,
+        price: Number(item.unitPrice),
+        qty: item.quantity,
+      }));
+
+      setCart(cartItems);
+    } catch (error) {
+      console.error("Failed to fetch existing order", error);
+    }
   };
 
   const addItem = (item: any) => {
@@ -47,9 +96,7 @@ function OrderScreen({ selectedTable, goBack, showToast }: any) {
 
     if (existing) {
       setCart(
-        cart.map((i) =>
-          i.id === item.id ? { ...i, qty: i.qty + 1 } : i
-        )
+        cart.map((i) => (i.id === item.id ? { ...i, qty: i.qty + 1 } : i))
       );
     } else {
       setCart([...cart, { ...item, qty: 1 }]);
@@ -59,9 +106,7 @@ function OrderScreen({ selectedTable, goBack, showToast }: any) {
   const removeItem = (id: string) => {
     setCart(
       cart
-        .map((i) =>
-          i.id === id ? { ...i, qty: i.qty - 1 } : i
-        )
+        .map((i) => (i.id === id ? { ...i, qty: i.qty - 1 } : i))
         .filter((i) => i.qty > 0)
     );
   };
@@ -75,102 +120,208 @@ function OrderScreen({ selectedTable, goBack, showToast }: any) {
       showToast("Cart is empty!");
       return;
     }
+
     setBillGenerated(true);
     showToast("Bill generated");
   };
 
   const occupyTable = async () => {
-    await fetch(`${API}/tables/${selectedTable.id}/status`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "OCCUPIED" }),
-    });
-    selectedTable.status = "OCCUPIED";
-    showToast("Table occupied");
+    try {
+      if (!selectedTable) return;
+
+      const res = await fetch(`${API}/tables/${selectedTable.id}/status`, {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status: "OCCUPIED" }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to occupy table");
+      }
+
+      setSelectedTable((prev: any) =>
+        prev ? { ...prev, status: "OCCUPIED" } : prev
+      );
+
+      showToast("Table occupied");
+    } catch (error) {
+      console.error(error);
+      showToast("Failed to occupy table");
+    }
   };
 
   const freeTable = async () => {
-    await fetch(`${API}/tables/${selectedTable.id}/status`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "AVAILABLE" }),
-    });
-    selectedTable.status = "AVAILABLE";
-    showToast("Table is Available");
+    try {
+      if (!selectedTable) return;
+
+      const res = await fetch(`${API}/tables/${selectedTable.id}/status`, {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status: "AVAILABLE" }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to free table");
+      }
+
+      setSelectedTable((prev: any) =>
+        prev ? { ...prev, status: "AVAILABLE" } : prev
+      );
+
+      showToast("Table is available");
+    } catch (error) {
+      console.error(error);
+      showToast("Failed to free table");
+    }
   };
 
   const placeOrder = async () => {
-    if (cart.length === 0) {
-      showToast("Cart is empty!");
-      return;
-    }
+    try {
+      if (cart.length === 0) {
+        showToast("Cart is empty!");
+        return;
+      }
 
-    const res = await fetch(`${API}/orders`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(
-        selectedTable?.id
-          ? { tableId: selectedTable.id }
-          : {}
-      ),
-    });
+      setLoading(true);
 
-    const order = await res.json();
-    setCurrentOrder(order);
+      let order = currentOrder;
 
-    for (const item of cart) {
-      await fetch(`${API}/orders/items`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orderId: order.id,
-          menuItemId: item.id,
-          quantity: item.qty,
-        }),
+      if (!order) {
+        const res = await fetch(`${API}/orders`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(
+            selectedTable?.id ? { tableId: selectedTable.id } : {}
+          ),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to create order");
+        }
+
+        order = await res.json();
+        setCurrentOrder(order);
+      }
+
+      await fetch(`${API}/orders/${order.id}/items`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
+
+      for (const item of cart) {
+        const itemRes = await fetch(`${API}/orders/items`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            orderId: order.id,
+            menuItemId: item.id,
+            quantity: item.qty,
+          }),
+        });
+
+        if (!itemRes.ok) {
+          throw new Error("Failed to add order items");
+        }
+      }
+
+      await fetchExistingOrder();
+      showToast("Order placed!");
+    } catch (error) {
+      console.error(error);
+      showToast("Failed to place order");
+    } finally {
+      setLoading(false);
     }
-    showToast("Order placed!");
   };
 
   const payNow = async () => {
-    if (!currentOrder) return;
+    try {
+      if (!currentOrder) {
+        showToast("No active order found");
+        return;
+      }
 
-    await fetch(`${API}/payments`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        orderId: currentOrder.id,
-        method: "CASH",
-      }),
-    });
+      setLoading(true);
 
-    showToast("Payment done");
-    setCart([]);
-    setBillGenerated(false);
-    setTimeout(() => goBack(), 2000);
+      const paymentRes = await fetch(`${API}/payments`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          orderId: currentOrder.id,
+          method: "CASH",
+        }),
+      });
+
+      if (!paymentRes.ok) {
+        throw new Error("Payment failed");
+      }
+
+      const completeRes = await fetch(
+        `${API}/orders/${currentOrder.id}/complete`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!completeRes.ok) {
+        throw new Error("Failed to complete order");
+      }
+
+      const updatedOrder = await completeRes.json();
+      setCurrentOrder(updatedOrder);
+
+      if (selectedTable) {
+        setSelectedTable((prev: any) =>
+          prev ? { ...prev, status: "AVAILABLE" } : prev
+        );
+      }
+
+      setCart([]);
+      setBillGenerated(false);
+      showToast("Payment done");
+
+      setTimeout(() => {
+        goBack();
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      showToast("Payment update failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="order-container">
-      
       <button onClick={goBack} className="back-btn">
         Back
       </button>
 
       <div className="order-header">
         <h2 className="order-title">
-          {selectedTable
-            ? `Table ${selectedTable.tableNumber}`
-            : "Take-out"}
+          {selectedTable ? `Table ${selectedTable.tableNumber}` : "Take-out"}
         </h2>
 
         {selectedTable &&
           (selectedTable.status === "AVAILABLE" ? (
-            <button onClick={occupyTable} className="btn btn-occupy">
+            <button
+              onClick={occupyTable}
+              className="btn btn-occupy"
+              disabled={loading}
+            >
               Occupy
             </button>
           ) : (
-            <button onClick={freeTable} className="btn btn-free">
+            <button
+              onClick={freeTable}
+              className="btn btn-free"
+              disabled={loading}
+            >
               Free
             </button>
           ))}
@@ -185,22 +336,24 @@ function OrderScreen({ selectedTable, goBack, showToast }: any) {
             removeItem={removeItem}
             total={total}
             clearCart={clearCart}
-            placeOrder={placeOrder}/>
+            placeOrder={placeOrder}
+          />
 
-          <button onClick={generateBill} className="generate-btn">
+          <button
+            onClick={generateBill}
+            className="generate-btn"
+            disabled={loading}
+          >
             Generate Bill
           </button>
 
           {billGenerated && (
-            <Bill
-              cart={cart}
-              total={total}
-              selectedTable={selectedTable}/>
+            <Bill cart={cart} total={total} selectedTable={selectedTable} />
           )}
 
-          {currentOrder && (
-            <button onClick={payNow} className="pay-btn">
-              Pay Now
+          {currentOrder && currentOrder.status !== "COMPLETED" && (
+            <button onClick={payNow} className="pay-btn" disabled={loading}>
+              {loading ? "Processing..." : "Pay Now"}
             </button>
           )}
 
