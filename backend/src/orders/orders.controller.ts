@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { Roles } from '../auth/roles.decorator';
+import { Roles, AppRole } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -20,13 +20,13 @@ export class OrdersController {
   constructor(private readonly service: OrdersService) {}
 
   @Post()
-  @Roles('EMPLOYEE', 'MANAGER')
+  @Roles(AppRole.EMPLOYEE, AppRole.MANAGER)
   create(@Body() body: { tableId?: string }) {
     return this.service.createOrder(body);
   }
 
   @Post('items')
-  @Roles('EMPLOYEE', 'MANAGER')
+  @Roles(AppRole.EMPLOYEE, AppRole.MANAGER)
   addItem(
     @Body()
     body: {
@@ -39,37 +39,37 @@ export class OrdersController {
   }
 
   @Get()
-  @Roles('EMPLOYEE', 'MANAGER')
+  @Roles(AppRole.EMPLOYEE, AppRole.MANAGER)
   getAll() {
     return this.service.getOrders();
   }
 
   @Get('table/:tableId')
-  @Roles('EMPLOYEE', 'MANAGER')
+  @Roles(AppRole.EMPLOYEE, AppRole.MANAGER)
   getOpenOrder(@Param('tableId') tableId: string) {
     return this.service.getOpenOrderByTable(tableId);
   }
 
   @Patch(':id/complete')
-  @Roles('EMPLOYEE', 'MANAGER')
+  @Roles(AppRole.EMPLOYEE, AppRole.MANAGER)
   complete(@Param('id') id: string) {
     return this.service.completeOrder(id);
   }
 
   @Patch(':id/cancel')
-  @Roles('EMPLOYEE', 'MANAGER')
+  @Roles(AppRole.EMPLOYEE, AppRole.MANAGER)
   cancel(@Param('id') id: string) {
     return this.service.cancelOrder(id);
   }
 
   @Delete(':id/items')
-  @Roles('EMPLOYEE', 'MANAGER')
+  @Roles(AppRole.EMPLOYEE, AppRole.MANAGER)
   clearItems(@Param('id') id: string) {
     return this.service.clearOrderItems(id);
   }
 
   @Get('history')
-  @Roles('MANAGER') // 🔥 only manager
+  @Roles(AppRole.MANAGER)
   getOrderHistory(
     @Query('date') date?: string,
     @Query('type') type?: string,

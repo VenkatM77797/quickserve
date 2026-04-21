@@ -7,7 +7,7 @@ type User = {
   id: string;
   name: string;
   email: string;
-  role: "MANAGER" | "EMPLOYEE";
+  role: 1 | 2;
 };
 
 type Props = {
@@ -33,6 +33,8 @@ function UserList({ goBack, showToast }: Props) {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const getRoleLabel = (role: 1 | 2) => (role === 1 ? "MANAGER" : "EMPLOYEE");
 
   const fetchUsers = async () => {
     try {
@@ -112,18 +114,18 @@ function UserList({ goBack, showToast }: Props) {
         return copiedUsers.sort((a, b) => b.name.localeCompare(a.name));
 
       case "role":
-        return copiedUsers.sort((a, b) => a.role.localeCompare(b.role));
+        return copiedUsers.sort((a, b) => a.role - b.role);
 
       case "managers-first":
         return copiedUsers.sort((a, b) => {
           if (a.role === b.role) return a.name.localeCompare(b.name);
-          return a.role === "MANAGER" ? -1 : 1;
+          return a.role === 1 ? -1 : 1;
         });
 
       case "employees-first":
         return copiedUsers.sort((a, b) => {
           if (a.role === b.role) return a.name.localeCompare(b.name);
-          return a.role === "EMPLOYEE" ? -1 : 1;
+          return a.role === 2 ? -1 : 1;
         });
 
       default:
@@ -166,11 +168,9 @@ function UserList({ goBack, showToast }: Props) {
 
             <div className="user-card-footer">
               <span
-                className={`role-badge ${
-                  user.role === "MANAGER" ? "manager" : "employee"
-                }`}
+                className={`role-badge ${user.role === 1 ? "manager" : "employee"}`}
               >
-                {user.role}
+                {getRoleLabel(user.role)}
               </span>
 
               <button

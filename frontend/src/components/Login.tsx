@@ -3,11 +3,11 @@ import "./css/Login.css";
 
 const API = import.meta.env.VITE_API_URL;
 
-type User = {
+export type User = {
   id: string;
   name: string;
   email: string;
-  role: "MANAGER" | "EMPLOYEE";
+  role: 1 | 2;
 };
 
 type Props = {

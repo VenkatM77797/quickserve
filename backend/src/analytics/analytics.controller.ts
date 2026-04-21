@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
-import { Roles } from '../auth/roles.decorator';
+import { Roles, AppRole } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -10,7 +10,7 @@ export class AnalyticsController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('MANAGER')
+  @Roles(AppRole.MANAGER)
   getDashboardStats() {
     return this.analyticsService.getDashboardStats();
   }

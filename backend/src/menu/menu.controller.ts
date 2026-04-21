@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
+import { Roles, AppRole } from '../auth/roles.decorator';
 
 @Controller('menu-items')
 export class MenuController {
@@ -10,7 +10,7 @@ export class MenuController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('MANAGER')
+  @Roles(AppRole.MANAGER)
   create(@Body() body: { name: string; price: number; categoryId: string }) {
     return this.service.create(body);
   }

@@ -27,7 +27,7 @@ type User = {
   id: string;
   name: string;
   email: string;
-  role: "MANAGER" | "EMPLOYEE";
+  role: 1 | 2;
 };
 
 function App() {
@@ -51,7 +51,7 @@ function App() {
           return;
         }
 
-        const res = await fetch(`${API}/auth/me`, {
+        const res = await fetch(`${API}/auth/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -62,7 +62,10 @@ function App() {
         }
 
         const data = await res.json();
-        setUser(data);
+        setUser({
+          ...data,
+          role: Number(data.role),
+        });
       } catch (err) {
         console.log("Auth error:", err);
         localStorage.removeItem("token");
@@ -74,7 +77,7 @@ function App() {
     fetchUser();
   }, []);
 
-  const isManager = user?.role === "MANAGER";
+  const isManager = user?.role === 1;
 
   const managerOnlyScreens: Screen[] = [
     "analytics",
@@ -112,7 +115,10 @@ function App() {
   }, [screen, user]);
 
   const handleLoginSuccess = (loggedInUser: User) => {
-    setUser(loggedInUser);
+    setUser({
+      ...loggedInUser,
+      role: Number(loggedInUser.role) as 1 | 2,
+    });
     setScreen("dashboard");
   };
 
@@ -166,23 +172,23 @@ function App() {
         />
       )}
 
-      {screen === "analytics" && user.role === "MANAGER" && (
+      {screen === "analytics" && user.role === 1 && (
         <Analytics goBack={() => setScreen("dashboard")} />
       )}
 
-      {screen === "history" && user.role === "MANAGER" && (
+      {screen === "history" && user.role === 1 && (
         <OrderHistory goBack={() => setScreen("dashboard")} />
       )}
 
-      {screen === "create-manager" && user.role === "MANAGER" && (
+      {screen === "create-manager" && user.role === 1 && (
         <CreateManager goBack={() => setScreen("dashboard")} />
       )}
 
-      {screen === "createEmployee" && user.role === "MANAGER" && (
+      {screen === "createEmployee" && user.role === 1 && (
         <CreateEmployee goBack={() => setScreen("dashboard")} />
       )}
 
-      {screen === "users" && user.role === "MANAGER" && (
+      {screen === "users" && user.role === 1 && (
         <UserList
           goBack={() => setScreen("dashboard")}
           showToast={showToast}

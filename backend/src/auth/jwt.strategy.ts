@@ -17,24 +17,31 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),  // configure jwt strat
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: secret,
     });
   }
 
   async validate(payload: any) {
+    console.log('JWT payload:', payload);
+
     const user = await this.authService.validateUser(payload.sub);
+    console.log('User from DB in jwt strategy:', user);
 
     if (!user) {
       throw new UnauthorizedException();
     }
 
-    return {
+    const result = {
       id: user.id,
       email: user.email,
-      role: user.role,
+      role: Number(user.role),
       name: user.name,
     };
+
+    console.log('User returned to request.user:', result);
+
+    return result;
   }
 }

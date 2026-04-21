@@ -13,7 +13,7 @@ type Screen =
 
 type DashboardProps = {
   setScreen: (screen: Screen) => void;
-  userRole: string | null;
+  userRole: 1 | 2 | null;
   userName: string | null;
   onLogout: () => void;
 };
@@ -24,6 +24,9 @@ function Dashboard({
   userName,
   onLogout,
 }: DashboardProps) {
+  const roleLabel =
+    userRole === 1 ? "MANAGER" : userRole === 2 ? "EMPLOYEE" : null;
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -33,7 +36,7 @@ function Dashboard({
           {userName && (
             <p className="dashboard-subtitle">
               Logged in as: <strong>{userName}</strong>
-              {userRole && <> ({userRole})</>}
+              {roleLabel && <> ({roleLabel})</>}
             </p>
           )}
         </div>
@@ -58,7 +61,7 @@ function Dashboard({
           Take-out
         </button>
 
-        {userRole === "MANAGER" && (
+        {userRole === 1 && (
           <>
             <button
               className="btn btn-analytics"

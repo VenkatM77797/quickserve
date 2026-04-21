@@ -1,9 +1,19 @@
-import {BadRequestException,Injectable,NotFoundException,UnauthorizedException,} from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
+
+enum UserRoleCode {
+  MANAGER = 1,
+  EMPLOYEE = 2,
+}
 
 @Injectable()
 export class AuthService {
@@ -14,7 +24,7 @@ export class AuthService {
 
   async createManager(dto: SignupDto) {
     const existingUser = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { email: dto.email.trim().toLowerCase() },
     });
 
     if (existingUser) {
@@ -28,7 +38,7 @@ export class AuthService {
         name: dto.name.trim(),
         email: dto.email.trim().toLowerCase(),
         password: hashedPassword,
-        role: 'MANAGER',
+        role: UserRoleCode.MANAGER,
       },
     });
 
@@ -45,7 +55,7 @@ export class AuthService {
 
   async createEmployee(dto: SignupDto) {
     const existingUser = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { email: dto.email.trim().toLowerCase() },
     });
 
     if (existingUser) {
@@ -59,7 +69,7 @@ export class AuthService {
         name: dto.name.trim(),
         email: dto.email.trim().toLowerCase(),
         password: hashedPassword,
-        role: 'EMPLOYEE',
+        role: UserRoleCode.EMPLOYEE,
       },
     });
 
