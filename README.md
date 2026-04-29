@@ -3,7 +3,7 @@
 A full-stack restaurant management system designed to handle real-world restaurant workflows including dine-in, takeout, billing, authentication, and analytics. Built for speed, scalability, and clean user experience.
 
 ---
-wddd
+wecmm
 ## 🚀 Features
 
 ### 🧾 Order Management
